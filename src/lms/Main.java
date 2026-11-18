@@ -1,41 +1,48 @@
 package lms;
+
 import lms.model.Book;
-import lms.model.Member;
+import lms.model.DVD;
+import lms.model.Student;
+import lms.model.Staff;
 import lms.service.Library;
 
-public class Main
-{
+public class Main {
+
     public static void main(String[] args) {
+
         Library library = new Library();
 
-        Book book1 = new Book(
-                "Clean Code",
-                "Robert C. Martin",
-                "978-0132350884"
-        );
+        Book b1 = new Book(
+                "B001", "Clean Code", "Robert C. Martin");
 
-        Member member1 = new Member(
-                "M001",
-                "Nadeesha Perera"
-        );
+        Book b2 = new Book(
+                "B002", "Effective Java", "Joshua Bloch");
 
-        library.addBook(book1);
-        library.addMember(member1);
+        DVD d1 = new DVD(
+                "D001", "Introduction to Algorithms", 120);
 
-        System.out.println("=== Initial Details ===");
-        library.listBooks();
-        library.listMembers();
+        library.addItem(b1);
+        library.addItem(b2);
+        library.addItem(d1);
 
-        // Manually update the book status and member count.
-        book1.setBorrowed(true);
-        member1.incrementBorrowedCount();
+        Student student = new Student("S001", "Kamal");
+        Staff staff = new Staff("ST001", "Nimal");
 
-        System.out.println("\n=== After Borrowing ===");
-        library.listBooks();
-        library.listMembers();
+        library.addMember(student);
+        library.addMember(staff);
 
-        System.out.println("\n=== List Sizes ===");
-        System.out.println("Total books: " + library.getBooks().size());
-        System.out.println("Total members: " + library.getMembers().size());
+        System.out.println("--- Library Items ---");
+        System.out.println(b1);
+        System.out.println(b2);
+        System.out.println(d1);
+
+        System.out.println("--- Library Members ---");
+        System.out.println(student);
+        System.out.println(staff);
+
+        library.printAllLateFees(3);
+
+        library.streamIfPossible(d1);
+        library.streamIfPossible(b1);
     }
 }
