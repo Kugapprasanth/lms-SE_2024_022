@@ -1,3 +1,4 @@
+
 package lms.model;
 
 public class DVD extends LibraryItem {
@@ -16,8 +17,7 @@ public class DVD extends LibraryItem {
     public void setDurationMinutes(int durationMinutes) {
         if (durationMinutes <= 0) {
             throw new IllegalArgumentException(
-                    "Duration must be greater than zero"
-            );
+                    "Duration must be greater than zero");
         }
         this.durationMinutes = durationMinutes;
     }
