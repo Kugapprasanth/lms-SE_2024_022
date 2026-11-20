@@ -1,6 +1,7 @@
+
 package lms.model;
 
-public class LibraryItem {
+public abstract class LibraryItem implements Loanable {
 
     private String id;
     private String title;
@@ -9,7 +10,7 @@ public class LibraryItem {
     public LibraryItem(String id, String title) {
         setId(id);
         setTitle(title);
-        this.isBorrowed = false;
+        setBorrowed(false);
     }
 
     public String getId() {
@@ -17,8 +18,9 @@ public class LibraryItem {
     }
 
     public void setId(String id) {
-        if (id == null || id.trim().isEmpty()) {
-            throw new IllegalArgumentException("Invalid ID");
+        if (id == null || id.isBlank()) {
+            throw new IllegalArgumentException(
+                    "ID cannot be blank");
         }
         this.id = id;
     }
@@ -28,8 +30,9 @@ public class LibraryItem {
     }
 
     public void setTitle(String title) {
-        if (title == null || title.trim().isEmpty()) {
-            throw new IllegalArgumentException("Invalid title");
+        if (title == null || title.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Title cannot be blank");
         }
         this.title = title;
     }
@@ -42,9 +45,42 @@ public class LibraryItem {
         this.isBorrowed = borrowed;
     }
 
-    public double calculateLateFee(int daysLate) {
-        return daysLate * 10.0;
+    @Override
+    public void loan(Member member) {
+
+        if (member == null) {
+            throw new IllegalArgumentException(
+                    "Member cannot be null");
+        }
+
+        if (isBorrowed) {
+            System.out.println(
+                    title + " is already on loan.");
+            return;
+        }
+
+        if (member.getBorrowedCount()
+                >= member.getMaxBorrowLimit()) {
+            System.out.println(
+                    member.getName()
+                            + " has reached the borrowing limit.");
+            return;
+        }
+
+        setBorrowed(true);
+        member.incrementBorrowedCount();
+
+        System.out.println(
+                title + " loaned to " + member.getName());
     }
+
+    @Override
+    public void returnItem() {
+        setBorrowed(false);
+        System.out.println(title + " returned.");
+    }
+
+    public abstract double calculateLateFee(int daysLate);
 
     @Override
     public String toString() {

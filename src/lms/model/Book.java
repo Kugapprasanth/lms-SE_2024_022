@@ -1,13 +1,15 @@
 
 package lms.model;
 
-public class Book extends LibraryItem {
+public class Book extends LibraryItem implements Reservable {
 
     private String author;
+    private Member reservedBy;
 
     public Book(String id, String title, String author) {
         super(id, title);
         setAuthor(author);
+        this.reservedBy = null;
     }
 
     public String getAuthor() {
@@ -16,8 +18,47 @@ public class Book extends LibraryItem {
 
     public void setAuthor(String author) {
         if (author == null || author.isBlank()) {
-            throw new IllegalArgumentException("Author cannot be blank");
+            throw new IllegalArgumentException(
+                    "Author cannot be blank");
         }
         this.author = author;
+    }
+
+    @Override
+    public double calculateLateFee(int daysLate) {
+        return daysLate * 10.0;
+    }
+
+    @Override
+    public void reserve(Member member) {
+
+        if (member == null) {
+            throw new IllegalArgumentException(
+                    "Member cannot be null");
+        }
+
+        if (isReserved()) {
+            System.out.println(
+                    getTitle() + " is already reserved.");
+            return;
+        }
+
+        reservedBy = member;
+
+        System.out.println(
+                getTitle() + " reserved for "
+                        + member.getName());
+    }
+
+    @Override
+    public void cancelReservation() {
+        reservedBy = null;
+        System.out.println(
+                getTitle() + " reservation cancelled.");
+    }
+
+    @Override
+    public boolean isReserved() {
+        return reservedBy != null;
     }
 }
