@@ -1,16 +1,20 @@
 
 package lms.model;
 
+import lms.exception.ItemNotAvailableException;
+
 public abstract class LibraryItem implements Loanable {
 
     private String id;
     private String title;
     private boolean isBorrowed;
+    private Member borrower;
 
     public LibraryItem(String id, String title) {
         setId(id);
         setTitle(title);
-        setBorrowed(false);
+        this.isBorrowed = false;
+        this.borrower = null;
     }
 
     public String getId() {
@@ -45,39 +49,62 @@ public abstract class LibraryItem implements Loanable {
         this.isBorrowed = borrowed;
     }
 
+    public Member getBorrower() {
+        return borrower;
+    }
+
     @Override
-    public void loan(Member member) {
+    public void loan(Member member)
+            throws ItemNotAvailableException {
+
+        if (isBorrowed) {
+            throw new ItemNotAvailableException(
+                    getTitle() + " is already on loan.");
+        }
 
         if (member == null) {
             throw new IllegalArgumentException(
                     "Member cannot be null");
         }
 
-        if (isBorrowed) {
-            System.out.println(
-                    title + " is already on loan.");
-            return;
-        }
-
         if (member.getBorrowedCount()
                 >= member.getMaxBorrowLimit()) {
-            System.out.println(
+
+            throw new ItemNotAvailableException(
                     member.getName()
-                            + " has reached the borrowing limit.");
-            return;
+                            + " has reached the limit of "
+                            + member.getMaxBorrowLimit()
+                            + " items.");
         }
 
-        setBorrowed(true);
+        this.borrower = member;
+        this.isBorrowed = true;
+
         member.incrementBorrowedCount();
 
         System.out.println(
-                title + " loaned to " + member.getName());
+                getTitle() + " loaned to "
+                        + member.getName());
     }
 
     @Override
-    public void returnItem() {
-        setBorrowed(false);
-        System.out.println(title + " returned.");
+    public void returnItem()
+            throws ItemNotAvailableException {
+
+        if (!isBorrowed) {
+            throw new ItemNotAvailableException(
+                    getTitle() + " is not on loan.");
+        }
+
+        if (borrower != null) {
+            borrower.decrementBorrowedCount();
+        }
+
+        borrower = null;
+        isBorrowed = false;
+
+        System.out.println(
+                getTitle() + " returned.");
     }
 
     public abstract double calculateLateFee(int daysLate);
