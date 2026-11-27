@@ -8,7 +8,10 @@ public class Member implements Comparable<Member> {
     private int borrowedCount;
     private int maxBorrowLimit;
 
-    public Member(String memberId, String name, int maxBorrowLimit) {
+    public Member(String memberId,
+                  String name,
+                  int maxBorrowLimit) {
+
         setMemberId(memberId);
         setName(name);
         setMaxBorrowLimit(maxBorrowLimit);
@@ -32,47 +35,58 @@ public class Member implements Comparable<Member> {
     }
 
     public void setMemberId(String memberId) {
+
         if (memberId == null || memberId.isBlank()) {
             throw new IllegalArgumentException(
                     "Member ID cannot be blank");
         }
+
         this.memberId = memberId;
     }
 
     public void setName(String name) {
+
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException(
                     "Name cannot be blank");
         }
+
         this.name = name;
     }
 
     public void setMaxBorrowLimit(int maxBorrowLimit) {
+
         if (maxBorrowLimit <= 0) {
             throw new IllegalArgumentException(
                     "Borrow limit must be greater than zero");
         }
+
         this.maxBorrowLimit = maxBorrowLimit;
     }
 
     public void setBorrowedCount(int borrowedCount) {
+
         if (borrowedCount < 0) {
             throw new IllegalArgumentException(
                     "Borrowed count cannot be negative");
         }
+
         this.borrowedCount = borrowedCount;
     }
 
     public void incrementBorrowedCount() {
-        setBorrowedCount(this.borrowedCount + 1);
+        setBorrowedCount(borrowedCount + 1);
+    }
+
+    public void decrementBorrowedCount() {
+        setBorrowedCount(borrowedCount - 1);
     }
 
     @Override
     public int compareTo(Member other) {
         return Integer.compare(
                 other.borrowedCount,
-                this.borrowedCount
-        );
+                this.borrowedCount);
     }
 
     @Override
